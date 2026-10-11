@@ -3,9 +3,9 @@ Repositorio para la práctica 2 del Seminario A Modelado Basado en Agentes- Seme
 
 Contenido:
 
-Barrera_Hernandez_Alonso_Diaz
+|-Barrera_Hernandez_Alonso_Diaz
 
-          |--------- Practica2
+          |---------- Practica2
 
                     |---------- Fuentes
                     
