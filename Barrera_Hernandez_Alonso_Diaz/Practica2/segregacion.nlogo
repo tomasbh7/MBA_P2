@@ -1,31 +1,175 @@
+globals [ ;variables globales
+  porcetanje-similar ;variable global para guardar la similitud
+]
+
+turtles-own[ ;variables de cada agente
+  satisfecho? ;preguntamos si el agente está satisfecho
+  vecinos-similares ;cantidad de vecinos similares
+  vecinos-diferentes ;cantidad de vecinos diferentes
+  numero-vecinos ;total de vecinos
+]
+
+to setup ;función principal
+  clear-all;limpiamos todo
+  ask patches[
+    set pcolor white ;patches color blanco
+    if random 100 < densidad[ ;ponemos la densidad que queramos con un slider
+      sprout 1[ ;creamos un agente si se cumple la condición
+        set color one-of[95 25] ;escogemos el color del agente (naranja o azul)
+        set size 1.3 ; tamaño de los agentes
+        set shape "person" ;forma de los agentes (persona)
+      ]
+    ]
+  ]
+  actualizar-tortugas;función para ver los estados de los agentes
+  actualizar-variables;función para actualizar variables
+  reset-ticks; reseteamos los ticks desde 0
+end
+
+to actualizar-tortugas ;función para actualizar a los agentes
+  ask turtles[
+    set vecinos-similares count(turtles-on neighbors) with [color = [color] of myself] ;contamos los vecinos iguales de donde está parado el agente
+    set vecinos-diferentes count(turtles-on neighbors) with [color != [color] of myself];contamos los vecinos diferentes de donde está parado el agente
+    set numero-vecinos vecinos-similares + vecinos-diferentes ;calculamos el número total de vecinos
+    set satisfecho? vecinos-similares >= (%similaridad-requerida * numero-vecinos / 100) ;si el procentaje de vecinos similares es tal el agente está satisfecho o ono
+  ]
+end
+
+to actualizar-variables ;función para actualizar las variables
+  let total-vecinos-similares sum [vecinos-similares] of turtles ;hacemos la suma de los vecinos similares
+  let total-vecinos sum [numero-vecinos] of turtles ;hacemos la suma de los vecinos totales
+  set porcetanje-similar (total-vecinos-similares / total-vecinos)* 100 ;sacamos el porcentaje de similitud
+end
+
+to go
+  if all? turtles [satisfecho?] [stop] ; si todos los agentes están satisfechos entonces paramos el programa
+  mover-tortugas-insatisfechas ;movemos a los agentes insatisfechos
+  actualizar-tortugas ; actualizamos a los agentes
+  actualizar-variables ;actualizamos las variables
+  tick ;aumentamos el número de ticks
+end
+
+to mover-tortugas-insatisfechas ;función para mover a los agentes insatisfechos
+  ask turtles with [not satisfecho?] ;si los agentes no están satisfechos
+  [buscar-nuevo-lugar];si no están satisfechos buscan un nuevo lugar
+end
+
+to buscar-nuevo-lugar ;función para buscar un nuevo lugar si el agente no está satisfecho
+  rt random-float 360; gira aleatoriamente a lo más 360 grados
+  fd random-float 10 ; camina aleatoriamente a lo más 10 pasos
+  if any? other turtles-here [buscar-nuevo-lugar] ;si hay otro agente en ese patche buscamos otro lugar vacío
+  move-to patch-here ;mueve el agente al centro del patche
+end
 
 @#$#@#$#@
 GRAPHICS-WINDOW
-210
-10
-647
-448
+423
+31
+875
+484
 -1
 -1
-13.0
+9.08
 1
 10
 1
 1
 1
 0
+0
+0
 1
-1
-1
--16
-16
--16
-16
+-24
+24
+-24
+24
 0
 0
 1
 ticks
 30.0
+
+SLIDER
+19
+71
+191
+104
+densidad
+densidad
+0
+100
+90.0
+1
+1
+NIL
+HORIZONTAL
+
+BUTTON
+18
+21
+85
+54
+NIL
+setup
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+19
+119
+223
+152
+%similaridad-requerida
+%similaridad-requerida
+0
+100
+30.0
+1
+1
+NIL
+HORIZONTAL
+
+BUTTON
+108
+21
+171
+54
+NIL
+go
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+PLOT
+17
+178
+402
+533
+%  similitud
+ticks
+%
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot porcetanje-similar"
 
 @#$#@#$#@
 ## WHAT IS IT?
