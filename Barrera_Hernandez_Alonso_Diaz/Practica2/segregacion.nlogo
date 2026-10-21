@@ -43,6 +43,7 @@ end
 
 to go
   if all? turtles [satisfecho?] [stop] ; si todos los agentes están satisfechos entonces paramos el programa
+  if ticks >= 2000 [stop] ;paramos si no hay convergencia o estabilidad
   mover-tortugas-insatisfechas ;movemos a los agentes insatisfechos
   actualizar-tortugas ; actualizamos a los agentes
   actualizar-variables ;actualizamos las variables
@@ -60,7 +61,6 @@ to buscar-nuevo-lugar ;función para buscar un nuevo lugar si el agente no está
   if any? other turtles-here [buscar-nuevo-lugar] ;si hay otro agente en ese patche buscamos otro lugar vacío
   move-to patch-here ;mueve el agente al centro del patche
 end
-
 @#$#@#$#@
 GRAPHICS-WINDOW
 423
@@ -130,7 +130,7 @@ SLIDER
 %similaridad-requerida
 0
 100
-30.0
+95.0
 1
 1
 NIL
@@ -517,6 +517,32 @@ NetLogo 6.4.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
+<experiments>
+  <experiment name="experiment" repetitions="10" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="2000"/>
+    <metric>ticks</metric>
+    <metric>count turtles with [not satisfecho?]</metric>
+    <metric>porcetanje-similar</metric>
+    <enumeratedValueSet variable="densidad">
+      <value value="90"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="%similaridad-requerida" first="40" step="1" last="90"/>
+  </experiment>
+  <experiment name="experiment_2" repetitions="20" runMetricsEveryStep="false">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="2000"/>
+    <metric>ticks</metric>
+    <metric>count turtles with [not satisfecho?]</metric>
+    <metric>porcetanje-similar</metric>
+    <enumeratedValueSet variable="densidad">
+      <value value="90"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="%similaridad-requerida" first="0" step="1" last="90"/>
+  </experiment>
+</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default
