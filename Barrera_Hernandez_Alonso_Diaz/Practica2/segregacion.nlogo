@@ -7,6 +7,7 @@ turtles-own[ ;variables de cada agente
   vecinos-similares ;cantidad de vecinos similares
   vecinos-diferentes ;cantidad de vecinos diferentes
   numero-vecinos ;total de vecinos
+  similitud-requerida ;umbral de similitud propio de cada agente para el ejercicio 3
 ]
 
 to setup ;función principal
@@ -18,6 +19,7 @@ to setup ;función principal
         set color one-of[95 25] ;escogemos el color del agente (naranja o azul)
         set size 1.3 ; tamaño de los agentes
         set shape "person" ;forma de los agentes (persona)
+        set similitud-requerida max list 0 (min list 100 (random-normal media-similitud desviacion-similitud)) ;similitud que solicita el ejericico 3
       ]
     ]
   ]
@@ -31,7 +33,8 @@ to actualizar-tortugas ;función para actualizar a los agentes
     set vecinos-similares count(turtles-on neighbors) with [color = [color] of myself] ;contamos los vecinos iguales de donde está parado el agente
     set vecinos-diferentes count(turtles-on neighbors) with [color != [color] of myself];contamos los vecinos diferentes de donde está parado el agente
     set numero-vecinos vecinos-similares + vecinos-diferentes ;calculamos el número total de vecinos
-    set satisfecho? vecinos-similares >= (%similaridad-requerida * numero-vecinos / 100) ;si el procentaje de vecinos similares es tal el agente está satisfecho o ono
+    ;set satisfecho? vecinos-similares >= (%similaridad-requerida * numero-vecinos / 100) ;si el procentaje de vecinos similares es tal el agente está satisfecho o ono
+    set satisfecho? vecinos-similares >= (similitud-requerida * numero-vecinos / 100) ; ejercicio 3
   ]
 end
 
@@ -170,6 +173,36 @@ false
 "" ""
 PENS
 "default" 1.0 0 -16777216 true "" "plot porcetanje-similar"
+
+SLIDER
+17
+558
+189
+591
+media-similitud
+media-similitud
+0
+100
+50.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+200
+558
+380
+591
+desviacion-similitud
+desviacion-similitud
+0
+100
+50.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
