@@ -16,12 +16,20 @@ to setup ;función principal
     set pcolor white ;patches color blanco
     if random 100 < densidad[ ;ponemos la densidad que queramos con un slider
       sprout 1[ ;creamos un agente si se cumple la condición
-        set color one-of[95 25] ;escogemos el color del agente (naranja o azul)
+        ;set color one-of[95 25] ;escogemos el color del agente (naranja o azul)
+        set color 95 ;todos empiezan azules; se reparten en 3 grupos más adeltante dentro de esta misma función para ele ejrcicio 4
         set size 1.3 ; tamaño de los agentes
         set shape "person" ;forma de los agentes (persona)
-        set similitud-requerida max list 0 (min list 100 (random-normal media-similitud desviacion-similitud)) ;similitud que solicita el ejericico 3
+        ;set similitud-requerida max list 0 (min list 100 (random-normal media-similitud desviacion-similitud)) ;similitud que solicita el ejericico 3
       ]
     ]
+  ]
+  let n count turtles ;repartimos la población en 3 grupos de 1/3 cada uno
+  ask n-of (floor (n / 3)) turtles [ set color 25 ] ;grupo naranja
+  ask n-of (floor (n / 3)) turtles with [color = 95] [ set color 55 ] ;grupo verde
+  ;los que quedan con color 95 son el grupo azul
+  ask turtles [
+    set similitud-requerida max list 0 (min list 100 (random-normal (media-del-grupo color) (desviacion-del-grupo color))) ;cada agente toma su umbral de la normal de su grupo
   ]
   actualizar-tortugas;función para ver los estados de los agentes
   actualizar-variables;función para actualizar variables
@@ -63,6 +71,20 @@ to buscar-nuevo-lugar ;función para buscar un nuevo lugar si el agente no está
   fd random-float 10 ; camina aleatoriamente a lo más 10 pasos
   if any? other turtles-here [buscar-nuevo-lugar] ;si hay otro agente en ese patche buscamos otro lugar vacío
   move-to patch-here ;mueve el agente al centro del patche
+end
+
+to-report media-del-grupo [c]
+  if parametros-iguales? [ report media-similitud ]
+  if c = 25 [ report media-naranja ]
+  if c = 55 [ report media-verde ]
+  report media-azul
+end
+
+to-report desviacion-del-grupo [c]
+  if parametros-iguales? [ report desviacion-similitud ]
+  if c = 25 [ report sd-naranja ]
+  if c = 55 [ report sd-verde ]
+  report sd-azul
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -124,21 +146,6 @@ NIL
 NIL
 1
 
-SLIDER
-19
-119
-223
-152
-%similaridad-requerida
-%similaridad-requerida
-0
-100
-95.0
-1
-1
-NIL
-HORIZONTAL
-
 BUTTON
 108
 21
@@ -157,10 +164,10 @@ NIL
 1
 
 PLOT
-17
-178
-402
-533
+21
+129
+406
+484
 %  similitud
 ticks
 %
@@ -175,15 +182,90 @@ PENS
 "default" 1.0 0 -16777216 true "" "plot porcetanje-similar"
 
 SLIDER
-17
-558
-189
-591
+18
+513
+190
+546
 media-similitud
 media-similitud
 0
 100
-70.0
+63.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+201
+513
+381
+546
+desviacion-similitud
+desviacion-similitud
+0
+100
+0.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+18
+568
+190
+601
+media-naranja
+media-naranja
+0
+100
+50.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+201
+569
+373
+602
+media-verde
+media-verde
+0
+100
+51.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+382
+569
+554
+602
+media-azul
+media-azul
+0
+100
+50.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+18
+625
+190
+658
+sd-naranja
+sd-naranja
+0
+100
+50.0
 1
 1
 NIL
@@ -191,18 +273,44 @@ HORIZONTAL
 
 SLIDER
 200
-558
-380
-591
-desviacion-similitud
-desviacion-similitud
+625
+372
+658
+sd-verde
+sd-verde
 0
 100
-10.0
+50.0
 1
 1
 NIL
 HORIZONTAL
+
+SLIDER
+382
+624
+554
+657
+sd-azul
+sd-azul
+0
+100
+50.0
+1
+1
+NIL
+HORIZONTAL
+
+SWITCH
+422
+503
+611
+536
+parametros-iguales?
+parametros-iguales?
+0
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -632,6 +740,80 @@ NetLogo 6.4.0
     <enumeratedValueSet variable="desviacion-similitud">
       <value value="5"/>
       <value value="30"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="experiment4a" repetitions="10" runMetricsEveryStep="false">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="2000"/>
+    <metric>ticks</metric>
+    <metric>count turtles with [not satisfecho?]</metric>
+    <metric>porcetanje-similar</metric>
+    <enumeratedValueSet variable="sd-verde">
+      <value value="50"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="sd-naranja">
+      <value value="50"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="densidad">
+      <value value="90"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="media-naranja">
+      <value value="50"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="media-similitud" first="0" step="5" last="100"/>
+    <enumeratedValueSet variable="desviacion-similitud">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="media-azul">
+      <value value="50"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="sd-azul">
+      <value value="50"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="media-verde">
+      <value value="51"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="parametros-iguales?">
+      <value value="true"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="experiment4b" repetitions="20" runMetricsEveryStep="false">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="1000"/>
+    <metric>count turtles</metric>
+    <enumeratedValueSet variable="densidad">
+      <value value="90"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="media-similitud" first="60" step="1" last="65"/>
+    <enumeratedValueSet variable="desviacion-similitud">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="parametros-iguales?">
+      <value value="true"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="experiment_4c" repetitions="20" runMetricsEveryStep="false">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="2000"/>
+    <metric>ticks</metric>
+    <metric>count turtles with [not satisfecho?]</metric>
+    <metric>porcetanje-similar</metric>
+    <metric>ifelse-value any? turtles with [not satisfecho?] [mean [similitud-requerida] of turtles with [not satisfecho?]] [0]</metric>
+    <enumeratedValueSet variable="densidad">
+      <value value="90"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="media-similitud">
+      <value value="62"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="desviacion-similitud">
+      <value value="30"/>
+      <value value="40"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="parametros-iguales?">
+      <value value="true"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
